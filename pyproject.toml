@@ -1,0 +1,15 @@
+[project]
+name = "comfyui-spectrum"
+description = "Spectrum-style acceleration path for FLUX in ComfyUI."
+version = "1.0.0"
+dependencies = []
+requires-python = ">=3.10"
+
+[project.urls]
+Repository = "https://github.com/evrardt/ComfyUI-Spectrum"
+Issues = "https://github.com/evrardt/ComfyUI-Spectrum/issues"
+
+[tool.comfy]
+PublisherId = "evrardt"
+DisplayName = "ComfyUI-Spectrum"
+Icon = ""
