@@ -19,6 +19,12 @@ class ChebyshevForecaster:
     def ready(self) -> bool:
         return len(self.history) >= max(3, min(self.m + 1, 4))
 
+    def reset(self):
+        self.history.clear()
+        self.feature_shape = None
+        self.feature_dtype = None
+        self.device = None
+
     def update(self, t: float, feature: torch.Tensor):
         feat = feature.detach()
         if self.feature_shape is None:
@@ -112,6 +118,7 @@ class SpectrumRuntime:
         self.decisions_by_sigma: Dict[float, Dict[str, Any]] = {}
         self.seen_sigmas: List[float] = []
         self.cycle_finished = False
+        self.forecaster.reset()
 
     def reset_all(self):
         self.reset_cycle()
@@ -176,23 +183,39 @@ class SpectrumRuntime:
         if len(self.seen_sigmas) >= self.num_steps() and not self.cycle_finished:
             self.cycle_finished = True
 
+    def _restart_cycle(self):
+        self.run_id += 1
+        self.reset_cycle()
+        self.last_info["forecasted_passes"] = 0
+        self.last_info["actual_forward_count"] = 0
+        self.last_info["curr_ws"] = float(self.cfg.window_size)
+        self.last_info["run_id"] = self.run_id
+
+    def _should_restart_on_sigma(self, sigma: float) -> bool:
+        # New sampling run often starts again from the first sigma.
+        # If we already progressed in a previous cycle, restart cleanly.
+        if not self.seen_sigmas:
+            return False
+        if sigma != self.seen_sigmas[0]:
+            return False
+        return len(self.seen_sigmas) > 1
+
     def begin_step(self, transformer_options: Dict[str, Any], timesteps: torch.Tensor) -> Dict[str, Any]:
         self._ensure_run_sync(transformer_options)
 
         sigma = self.sigma_key(transformer_options, timesteps)
         self.last_info["last_sigma"] = sigma
 
-        if sigma in self.decisions_by_sigma:
-            return self.decisions_by_sigma[sigma]
-
         self._finish_cycle_if_needed()
 
         if self.cycle_finished:
-            self.reset_cycle()
-            self.last_info["forecasted_passes"] = 0
-            self.last_info["actual_forward_count"] = 0
-            self.last_info["curr_ws"] = float(self.cfg.window_size)
-            self.last_info["run_id"] = self.run_id
+            self._restart_cycle()
+
+        if self._should_restart_on_sigma(sigma):
+            self._restart_cycle()
+
+        if sigma in self.decisions_by_sigma:
+            return self.decisions_by_sigma[sigma]
 
         step_idx = len(self.seen_sigmas)
         self.seen_sigmas.append(sigma)
