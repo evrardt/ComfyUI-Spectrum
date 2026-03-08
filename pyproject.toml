@@ -1,9 +1,13 @@
 [project]
-name = "comfyui-spectrum"
+name = "evrardt-spectrum-flux"
 description = "Spectrum-style acceleration path for FLUX in ComfyUI."
 version = "1.0.0"
 dependencies = []
 requires-python = ">=3.10"
+classifiers = [
+  "Operating System :: OS Independent",
+  "Environment :: GPU :: NVIDIA CUDA",
+]
 
 [project.urls]
 Repository = "https://github.com/evrardt/ComfyUI-Spectrum"

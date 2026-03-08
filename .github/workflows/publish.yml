@@ -2,8 +2,11 @@ name: Publish to Comfy Registry
 
 on:
   workflow_dispatch:
-  release:
-    types: [published]
+  push:
+    branches:
+      - main
+    paths:
+      - pyproject.toml
 
 jobs:
   publish-node:
