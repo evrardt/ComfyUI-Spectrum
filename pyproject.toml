@@ -1,7 +1,7 @@
 [project]
 name = "lafabrique-spectrum-flux"
 description = "Spectrum-style acceleration path for FLUX in ComfyUI."
-version = "1.0.0"
+version = "1.0.1"
 dependencies = []
 requires-python = ">=3.10"
 classifiers = [
