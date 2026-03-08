@@ -1,5 +1,5 @@
 [project]
-name = "evrardt-spectrum-flux"
+name = "lafabrique-spectrum-flux"
 description = "Spectrum-style acceleration path for FLUX in ComfyUI."
 version = "1.0.0"
 dependencies = []
@@ -14,6 +14,6 @@ Repository = "https://github.com/evrardt/ComfyUI-Spectrum"
 Issues = "https://github.com/evrardt/ComfyUI-Spectrum/issues"
 
 [tool.comfy]
-PublisherId = "evrardt"
+PublisherId = "lafabrique"
 DisplayName = "ComfyUI-Spectrum"
 Icon = ""
